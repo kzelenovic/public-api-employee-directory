@@ -33,6 +33,13 @@ async function generateCards(url) {
     }
 }
 
+function convertDate(dob) {
+    let date = dob;
+    let regex = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z/;
+    let replacement = '$2-$3-$1';
+    return date.replace(regex, replacement);
+}
+
 function generateModal(index) {
     const modalHTML = `<div class="modal-container">
         <div class="modal">
@@ -45,7 +52,7 @@ function generateModal(index) {
                 <hr>
                 <p class="modal-text">${employeeArray[index].phone}</p>
                 <p class="modal-text">${employeeArray[index].location.street.number} ${employeeArray[index].location.street.name}, ${employeeArray[index].location.city}, ${employeeArray[index].location.state} ${employeeArray[index].location.postcode}</p>
-                <p class="modal-text">Birthday: ${employeeArray[index].dob.date}</p>
+                <p class="modal-text">Birthday: ${convertDate(employeeArray[index].dob.date)}</p>
             </div>
         </div>
     </div>`;
@@ -61,6 +68,8 @@ generateCards('https://randomuser.me/api/?results=12&inc=picture,name,email,loca
 document.addEventListener('click', (e) => {
     const clicked = e.target;
     const clickedParent = clicked.parentNode;
+    const modal = document.querySelector('.modal-container');
+
     if (clicked.className === 'card') {
         openModal(clicked.getAttribute('js-employee-index'));
     } else if (clickedParent.getAttribute('js-employee-index')) {
@@ -68,7 +77,11 @@ document.addEventListener('click', (e) => {
     }
 
     if(clicked.className === 'modal-close-btn' || clicked.parentNode.className === 'modal-close-btn') {
-        const modal = document.querySelector('.modal-container');
         modal.remove();
     }
+
+    if(clicked === modal) {
+        modal.remove();
+    }
+    
 });
