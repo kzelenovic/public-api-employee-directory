@@ -1,6 +1,14 @@
 const body = document.querySelector('body');
 const gallery = document.querySelector('#gallery');
 
+// Will hold array of fetched employee data objects
+const employeeArray = [];
+
+/**
+ * Returns an array of objects of employee data.
+ * @param {string} url path to resource to fetch
+ * @returns {array} employee objects
+ */
 async function getEmployees(url) {
     try {
         const employeeResponse = await fetch(url);
@@ -11,8 +19,10 @@ async function getEmployees(url) {
     }
 }
 
-const employeeArray = [];
-
+/**
+ * Generate card with employee data and print 12 cards onto page.
+ * @param {string} url path to resource to fetch
+ */
 async function generateCards(url) {
     const employeeArr = await getEmployees(url);
 
@@ -33,6 +43,11 @@ async function generateCards(url) {
     }
 }
 
+/**
+ * Converts date of birth from date-time format to 'MM/DD/YYYY'
+ * @param {string} dob date of birth from employee data
+ * @returns {string}
+ */
 function convertDate(dob) {
     let date = dob;
     let regex = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z/;
@@ -40,6 +55,11 @@ function convertDate(dob) {
     return date.replace(regex, replacement);
 }
 
+/**
+ * Generates modal HTML using data from employeeArray and 
+ * @param {number} index value held in a card's 'js-employee-index' attribute
+ * @returns {string}
+ */
 function generateModal(index) {
     const modalHTML = `<div class="modal-container">
         <div class="modal">
@@ -59,6 +79,10 @@ function generateModal(index) {
     return modalHTML;
 }
 
+/**
+ * Appends modal HTML to body of document.
+ * @param {number} index value held in a card's 'js-employee-index' attribute
+ */
 function openModal(index) {
     body.insertAdjacentHTML('afterbegin', generateModal(index));
 }
@@ -83,5 +107,5 @@ document.addEventListener('click', (e) => {
     if(clicked === modal) {
         modal.remove();
     }
-    
+
 });
