@@ -87,6 +87,45 @@ function openModal(index) {
     body.insertAdjacentHTML('afterbegin', generateModal(index));
 }
 
+document.querySelector('.search-container').insertAdjacentHTML('afterbegin',
+    `<form action="#" method="get">
+    <input type="search" id="search-input" class="search-input" placeholder="Search...">
+    <input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
+    </form>`);
+
+const search = document.querySelector('#search-input');
+const searchSubmit = document.querySelector('#search-submit');
+
+function searchNames(input) {
+    let searchResults = [];
+    const match = new RegExp('^' + input, 'i');
+
+    for (let i = 0; i < employeeArray.length; i++) {
+        const employee = employeeArray[i];
+        if (match.test(employee.name.first) || match.test(employee.name.last)) {
+            searchResults.push(employee);
+        }
+    }
+    return searchResults;
+}
+
+function printResults(arr) {
+    gallery.innerHTML = '';
+    for (let i = 0; i < arr.length; i++) {
+        const employee = arr[i];
+        gallery.insertAdjacentHTML('beforeend', `<div class="card" js-employee-index="${i}">
+        <div class="card-img-container" js-employee-index="${i}">
+            <img class="card-img" src="${employee.picture.large}" alt="profile picture">
+        </div>
+        <div class="card-info-container" js-employee-index="${i}">
+            <h3 id="name" class="card-name cap">${employee.name.first} ${employee.name.last}</h3>
+            <p class="card-text">${employee.email}</p>
+            <p class="card-text cap">${employee.location.city}, ${employee.location.state}</p>
+        </div>
+    </div>`);
+    }
+}
+
 generateCards('https://randomuser.me/api/?results=12&inc=picture,name,email,location,phone,dob&nat=us');
 
 document.addEventListener('click', (e) => {
@@ -100,12 +139,15 @@ document.addEventListener('click', (e) => {
         openModal(clickedParent.getAttribute('js-employee-index'));
     }
 
-    if(clicked.className === 'modal-close-btn' || clicked.parentNode.className === 'modal-close-btn') {
+    if (clicked.className === 'modal-close-btn' || clicked.parentNode.className === 'modal-close-btn') {
         modal.remove();
     }
 
-    if(clicked === modal) {
+    if (clicked === modal) {
         modal.remove();
     }
+});
 
+search.addEventListener('keyup', (e) => {
+    printResults(searchNames(search.value));
 });
