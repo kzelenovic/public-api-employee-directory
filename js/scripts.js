@@ -74,11 +74,6 @@ function generateModal(index) {
                 <p class="modal-text">${employeeArray[index].location.street.number} ${employeeArray[index].location.street.name}, ${employeeArray[index].location.city}, ${employeeArray[index].location.state} ${employeeArray[index].location.postcode}</p>
                 <p class="modal-text">Birthday: ${convertDate(employeeArray[index].dob.date)}</p>
             </div>
-
-            <div class="modal-btn-container">
-                <button type="button" id="modal-prev" class="modal-prev btn">Prev</button>
-                <button type="button" id="modal-next" class="modal-next btn">Next</button>
-            </div>
         </div>
     </div>`;
     return modalHTML;
@@ -90,28 +85,6 @@ function generateModal(index) {
  */
 function openModal(index) {
     body.insertAdjacentHTML('afterbegin', generateModal(index));
-}
-
-document.querySelector('.search-container').insertAdjacentHTML('afterbegin',
-    `<form action="#" method="get">
-    <input type="search" id="search-input" class="search-input" placeholder="Search...">
-    <input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
-    </form>`);
-
-const search = document.querySelector('#search-input');
-const searchSubmit = document.querySelector('#search-submit');
-
-function searchNames(input) {
-    let searchResults = [];
-    const match = new RegExp('^' + input, 'i');
-
-    for (let i = 0; i < employeeArray.length; i++) {
-        const employee = employeeArray[i];
-        if (match.test(employee.name.first) || match.test(employee.name.last)) {
-            searchResults.push(employee);
-        }
-    }
-    return searchResults;
 }
 
 function printResults(arr) {
@@ -133,18 +106,9 @@ function printResults(arr) {
 
 generateCards('https://randomuser.me/api/?results=12&inc=picture,name,email,location,phone,dob&nat=us');
 
-// Keeps track of which employee to display in the modal while navigating
-let modalIndex = 0;
-
 document.addEventListener('click', (e) => {
     const clicked = e.target;
     const clickedParent = clicked.parentNode;
-
-    const modal = document.querySelector('.modal-container');
-    const modalPrevBtn = document.querySelector('#modal-prev');
-    const modalNextBtn = document.querySelector('#modal-next');
-
-    console.log(modalIndex);
 
     if (clicked.className === 'card') {
         modalIndex = clicked.getAttribute('js-employee-index');
@@ -154,6 +118,8 @@ document.addEventListener('click', (e) => {
         openModal(clickedParent.getAttribute('js-employee-index'));
     }
 
+    const modal = document.querySelector('.modal-container');
+
     if (clicked.className === 'modal-close-btn' || clickedParent.className === 'modal-close-btn') {
         modal.remove();
     }
@@ -161,33 +127,4 @@ document.addEventListener('click', (e) => {
     if (clicked === modal) {
         modal.remove();
     }
-
-    if (clicked === modalPrevBtn) {
-        modalIndex--;
-        modal.remove();
-        openModal(modalIndex);
-    }
-
-    if (clicked === modalNextBtn) {
-        modalIndex++;
-        modal.remove();
-        openModal(modalIndex)
-    }
-    
-    if (modalIndex === 0) {
-        modalPrevBtn.disabled = true;
-    } else {
-        modalPrevBtn.disabled = false;
-    }
-
-    if (modalIndex === 11) {
-        modalNextBtn.disbaled = true;
-    } else {
-        modalNextBtn.disabled = false;
-    }
-    
-});
-
-search.addEventListener('keyup', (e) => {
-    printResults(searchNames(search.value));
 });
